@@ -9,7 +9,7 @@
     </author>
     <content src="www/index.html" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
-  <plugin name="pushwoosh-phonegap-plugin"/>
+ 
     <access origin="*" />
   <access origin="*.pushwoosh.com"/>
     <allow-intent href="http://*/*" />
