@@ -17,74 +17,75 @@
  * under the License.
  */
 
-function registerPushwooshIOS() {
+function registerPushwooshWP() {
 	var pushNotification = cordova.require("com.pushwoosh.plugins.pushwoosh.PushNotification");
 
 	//set push notification callback before we initialize the plugin
-	document.addEventListener('push-notification',
-		function(event) {
-			//get the notification payload
-			var notification = event.notification;
+	document.addEventListener('push-notification', function(event) {
+		//get the notification payload
+		var notification = event.notification;
 
-			//display alert to the user for example
-			alert(notification.aps.alert);
-
-			//to view full push payload
-			//alert(JSON.stringify(notification));
-
-			//clear the app badge
-			pushNotification.setApplicationIconBadgeNumber(0);
-		}
-	);
+		//display alert to the user for example
+		alert(JSON.stringify(notification));
+	});
 
 	//initialize the plugin
 	pushNotification.onDeviceReady({
-		pw_appid: "4FC89B6D14A655.46488481"
+		appid: "4FC89B6D14A655.46488481",
+		serviceName: ""
 	});
 
 	//register for pushes
 	pushNotification.registerDevice(
 		function(status) {
-			var deviceToken = status['deviceToken'];
+			var deviceToken = status;
 			console.warn('registerDevice: ' + deviceToken);
-			onPushwooshiOSInitialized(deviceToken);
+			alert("push token is " + deviceToken);
+			onPushwooshWPInitialized();
 		},
 		function(status) {
 			console.warn('failed to register : ' + JSON.stringify(status));
-			//alert(JSON.stringify(['failed to register ', status]));
+			alert(JSON.stringify(['failed to register ', status]));
 		}
 	);
-
-	//reset badges on start
-	pushNotification.setApplicationIconBadgeNumber(0);
 }
 
-function onPushwooshiOSInitialized(pushToken) {
+function onPushwooshWPInitialized() {
 	var pushNotification = cordova.require("com.pushwoosh.plugins.pushwoosh.PushNotification");
-	//retrieve the tags for the device
-	pushNotification.getTags(
-		function(tags) {
-			console.warn('tags for the device: ' + JSON.stringify(tags));
-		},
-		function(error) {
-			console.warn('get tags error: ' + JSON.stringify(error));
-		}
-	);
 
-	//example how to get push token at a later time 
+	//if you need push token at a later time you can always get it from Pushwoosh plugin
 	pushNotification.getPushToken(
 		function(token) {
-			console.warn('push token device: ' + token);
+			alert('push token: ' + token);
 		}
 	);
 
-	//example how to get Pushwoosh HWID to communicate with Pushwoosh API
+	//and HWID if you want to communicate with Pushwoosh API
 	pushNotification.getPushwooshHWID(
 		function(token) {
-			console.warn('Pushwoosh HWID: ' + token);
+			alert('Pushwoosh HWID: ' + token);
 		}
 	);
 
-	//start geo tracking.
-	//pushNotification.startLocationTracking();
+	//settings tags
+	pushNotification.setTags({
+			tagName: "tagValue",
+			intTagName: 10
+		},
+		function(status) {
+			alert('setTags success: ' + JSON.stringify(status));
+		},
+		function(status) {
+			console.warn('setTags failed');
+		}
+	);
+
+	pushNotification.getTags(
+		function(status) {
+			alert('getTags success: ' + JSON.stringify(status));
+		},
+		function(status) {
+			console.warn('getTags failed');
+		}
+	);
 }
